@@ -1,4 +1,5 @@
-export type Entry = { id: string; park_id: string; kind: 'tip' | 'idea' | 'place'; title: string; body: string; created_at: string; confirmations: number; active: boolean }
+export type CommunityPlaceType = 'animal' | 'toilet' | 'food' | 'water' | 'bench' | 'info'
+export type Entry = { id: string; park_id: string; kind: 'tip' | 'idea' | 'place'; title: string; body: string; created_at: string; confirmations: number; active: boolean; lat?: number | null; lon?: number | null; place_type?: CommunityPlaceType | null }
 const url = (import.meta.env.VITE_SUPABASE_URL as string | undefined)?.replace(/\/$/, '')
 const key = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined
 const supabaseConfigured = Boolean(url && key)
@@ -110,7 +111,7 @@ export async function entries(park: string): Promise<Entry[]> {
     if (!response.ok) throw new Error('community-request')
     const data = await response.json()
     const list: unknown = Array.isArray(data) ? data : data?.entries
-    if (!Array.isArray(list) || list.some(e => !e || typeof e.id !== 'string' || e.park_id !== park || !['tip','idea','place'].includes(e.kind) || typeof e.title !== 'string' || typeof e.body !== 'string' || typeof e.created_at !== 'string' || !Number.isFinite(Date.parse(e.created_at)) || !Number.isInteger(e.confirmations) || e.confirmations < 0 || typeof e.active !== 'boolean')) throw new Error('community-invalid-feed')
+    if (!Array.isArray(list) || list.some(e => !e || typeof e.id !== 'string' || e.park_id !== park || !['tip','idea','place'].includes(e.kind) || typeof e.title !== 'string' || typeof e.body !== 'string' || typeof e.created_at !== 'string' || !Number.isFinite(Date.parse(e.created_at)) || !Number.isInteger(e.confirmations) || e.confirmations < 0 || typeof e.active !== 'boolean' || (e.lat != null && (!Number.isFinite(e.lat) || Math.abs(e.lat) > 90)) || (e.lon != null && (!Number.isFinite(e.lon) || Math.abs(e.lon) > 180)) || (e.place_type != null && !['animal','toilet','food','water','bench','info'].includes(e.place_type)))) throw new Error('community-invalid-feed')
     return list as Entry[]
   }
   return request(`community_feed?park_id=eq.${encodeURIComponent(park)}&order=created_at.desc&limit=100`)
@@ -122,4 +123,17 @@ export async function submit(park: string, kind: Entry['kind'], title: string, b
 export async function confirm(id: string) {
   if ((await initializeCommunity()).mode !== 'supabase') throw new Error('community-top-level-sign-in-required')
   return request('rpc/confirm_community', { p_entry: id })
+}
+
+/** Confirmed community locations are map annotations, never routing edges. */
+export function communityPlaces(list: Entry[], parkId: string, bounds: [[number, number], [number, number]]): (Entry & { lat: number; lon: number })[] {
+  const south = Math.min(bounds[0][0], bounds[1][0]) - 0.002
+  const north = Math.max(bounds[0][0], bounds[1][0]) + 0.002
+  const west = Math.min(bounds[0][1], bounds[1][1]) - 0.002
+  const east = Math.max(bounds[0][1], bounds[1][1]) + 0.002
+  return list.filter((entry): entry is Entry & { lat: number; lon: number } =>
+    entry.park_id === parkId && entry.kind === 'place' && entry.active === true && entry.confirmations >= 10 &&
+    typeof entry.lat === 'number' && Number.isFinite(entry.lat) && Math.abs(entry.lat) <= 90 &&
+    typeof entry.lon === 'number' && Number.isFinite(entry.lon) && Math.abs(entry.lon) <= 180 &&
+    entry.lat >= south && entry.lat <= north && entry.lon >= west && entry.lon <= east)
 }

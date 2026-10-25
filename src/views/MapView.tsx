@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Circle, MapContainer, Marker, Polygon, Polyline, TileLayer, useMap, useMapEvents } from 'react-leaflet'
+import { Circle, MapContainer, Marker, Polygon, Polyline, Popup, TileLayer, useMap, useMapEvents } from 'react-leaflet'
 import L from 'leaflet'
 import { Coffee, Crosshair, DoorOpen, EyeOff, Navigation, Toilet, X } from 'lucide-react'
 import { loc } from '@/i18n'
@@ -14,9 +14,17 @@ import { speciesById } from '@/data/species'
 import type { Poi, StatusReport } from '@/types'
 import CatchSheet from '@/components/CatchSheet'
 import { Button, Sheet } from '@/components/ui'
+import { communityPlaces, entries as communityEntries, initializeCommunity, type Entry, type CommunityPlaceType } from '@/features/community/api'
 import { iconFor } from './PlanView'
 
 const ARRIVE_M = 30
+const COMMUNITY_EMOJI: Record<CommunityPlaceType, string> = { animal: '🐾', toilet: '🚻', food: '🍽️', water: '💧', bench: '🪑', info: 'ℹ️' }
+const COMMUNITY_LABEL = {
+  hu: { confirmed: 'Közösség által megerősítve', note: 'Látogatói helyjelölés. Ehhez a ponthoz nincs ellenőrzött navigációs útvonal.' },
+  en: { confirmed: 'Community confirmed', note: 'Visitor-contributed location. No verified navigation route is available for this point.' },
+  de: { confirmed: 'Von der Community bestätigt', note: 'Von Besuchern markierter Ort. Für diesen Punkt ist keine geprüfte Navigationsroute verfügbar.' },
+  es: { confirmed: 'Confirmado por la comunidad', note: 'Lugar aportado por visitantes. No hay una ruta de navegación verificada a este punto.' },
+}
 
 function emojiIcon(emoji: string, opts: { big?: boolean; done?: boolean; next?: boolean; closed?: boolean } = {}) {
   const s = opts.big ? 44 : 32
@@ -80,6 +88,28 @@ export default function MapView() {
   const [fly, setFly] = useState<LatLon | null>(null)
   const [now, setNow] = useState(Date.now())
   const [zoom, setZoom] = useState(17)
+  const [community, setCommunity] = useState<Entry[]>([])
+  const communityLabel = COMMUNITY_LABEL[lang.slice(0, 2) as keyof typeof COMMUNITY_LABEL] ?? COMMUNITY_LABEL.en
+  const communityPins = useMemo(() => communityPlaces(community, park.id, park.bounds), [community, park.id, park.bounds])
+  useEffect(() => {
+    let live = true
+    let fetching = false
+    setCommunity([])
+    async function refreshCommunity() {
+      if (fetching) return
+      fetching = true
+      try {
+        const config = await initializeCommunity()
+        if (!live || config.mode === 'draft') return
+        const points = await communityEntries(park.id)
+        if (live) setCommunity(points)
+      } catch { /* optional community layer must never block the park map */ }
+      finally { fetching = false }
+    }
+    void refreshCommunity()
+    const timer = setInterval(() => { void refreshCommunity() }, 60000)
+    return () => { live = false; clearInterval(timer) }
+  }, [park.id])
   useWakeLock(true)
   useEffect(() => { const i = setInterval(() => setNow(Date.now()), 30000); return () => clearInterval(i) }, [])
 
@@ -182,6 +212,17 @@ export default function MapView() {
               icon={emojiIcon(sp?.emoji ?? iconFor(p.type), { big: !!sp, next: p.id === nextId, done: !!sp && caught.has(sp.id), closed: isClosed(p.id) })} />
           )
         })}
+        {communityPins.map((entry) => <Marker key={`community:${entry.id}`} position={[entry.lat, entry.lon]}
+          icon={emojiIcon(COMMUNITY_EMOJI[entry.place_type ?? 'info'], { done: true })}>
+          <Popup>
+            <div className="max-w-[16rem] space-y-2 text-jungle-900">
+              <strong className="block break-words">{entry.title}</strong>
+              <p className="whitespace-pre-wrap break-words">{entry.body}</p>
+              <p className="text-xs font-bold text-jungle-700">✓ {communityLabel.confirmed} · {entry.confirmations}/10</p>
+              <p className="text-xs text-jungle-600">{communityLabel.note}</p>
+            </div>
+          </Popup>
+        </Marker>)}
         {here && geo.accuracy && geo.source === 'gps' && <Circle center={here} radius={geo.accuracy} pathOptions={{ color: '#2563eb', weight: 1, fillOpacity: 0.08 }} />}
         {here && <Marker position={here} icon={youIcon} />}
         <TapToSet enabled={geo.demo || (geo.accuracy ?? 0) > 35} onTap={geo.setManual} />
