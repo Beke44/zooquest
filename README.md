@@ -4,6 +4,8 @@
 
 > Négy AI közösen tervezte (Claude, ChatGPT, Gemini, DeepSeek), Békési István ötlete alapján. A döntések menete: [`docs/otlettabla.md`](docs/otlettabla.md).
 
+**Élő oldal:** https://beke44.github.io/zooquest/ (minden `main`-re pusholás után automatikusan frissül)
+
 ## Mit tud?
 
 | Látogatói panasz (világszerte) | ZooQuest-megoldás |
