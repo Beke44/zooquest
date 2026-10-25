@@ -47,8 +47,10 @@ interface OsmEl {
  */
 export async function overpass(query: string, signal?: AbortSignal): Promise<OsmEl[]> {
   const body = 'data=' + encodeURIComponent(query)
-  for (let attempt = 0; attempt < 2; attempt++) {
+  for (let attempt = 0; attempt < 3; attempt++) {
     const ctrls = MIRRORS.map(() => new AbortController())
+    // a round never waits longer than 45 s; the next round starts on the main server again
+    const cap = setTimeout(() => ctrls.forEach((c) => c.abort()), 45000)
     const onAbort = () => ctrls.forEach((c) => c.abort())
     signal?.addEventListener('abort', onAbort)
     try {
@@ -82,10 +84,11 @@ export async function overpass(query: string, signal?: AbortSignal): Promise<Osm
       })
       if (res) return res
     } finally {
+      clearTimeout(cap)
       signal?.removeEventListener('abort', onAbort)
     }
     if (signal?.aborted) break
-    await new Promise((r) => setTimeout(r, 4000))
+    await new Promise((r) => setTimeout(r, 3000))
   }
   throw new Error('overpass unavailable')
 }
@@ -340,10 +343,12 @@ export function buildPack(ref: ZooRef, els: OsmEl[]): ParkPack {
 export function packQuery(ref: ZooRef) {
   const sel = ref.osmType === 'node' ? null : `${ref.osmType}(${ref.osmId})`
   const scope = sel ? '(area.a)' : `(around:450,${ref.lat},${ref.lon})`
+  // light query: full geometry only for walkable ways and the zoo outline,
+  // a single centre point for every place (≈5–10× smaller answers)
   return `[out:json][timeout:90][maxsize:67108864];
 ${sel ? `${sel}->.z;.z out geom;.z map_to_area->.a;` : `node(${ref.osmId});out;`}
-(way${scope}[highway];nwr${scope}[amenity];nwr${scope}[attraction];nwr${scope}[zoo];nwr${scope}[species];nwr${scope}[leisure~"playground|picnic_table|garden"];nwr${scope}[entrance];nwr${scope}[tourism~"information|attraction"];nwr${scope}[building][name];nwr${scope}[shop];);
-out geom qt;`
+way${scope}[highway~"^(footway|path|pedestrian|steps|living_street|track|service|cycleway|corridor|bridleway)$"];out geom qt;
+(nwr${scope}[amenity~"^(toilets|drinking_water|restaurant|fast_food|cafe|ice_cream|bar|food_court|bench|shelter|first_aid)$"];nwr${scope}[attraction];nwr${scope}[zoo];nwr${scope}[species];nwr${scope}[leisure~"^(playground|picnic_table)$"];node${scope}[entrance];nwr${scope}[tourism~"^(information|attraction)$"][name];nwr${scope}[building][name];nwr${scope}[shop~"^(gift|pastry|confectionery|bakery)$"];);out tags center qt;`
 }
 
 export async function loadPack(ref: ZooRef, signal?: AbortSignal): Promise<ParkPack> {
