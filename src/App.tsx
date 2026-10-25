@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next'
 import { Compass, Globe2, LayoutGrid, Map as MapIcon, Trophy } from 'lucide-react'
 import { LANGS, setLang } from './i18n'
 import { totals, useStore } from './lib/store'
+import { useParkStatus } from './lib/park'
+import { loc } from './i18n'
 import { useToast } from './lib/toast'
 import { Toast } from './components/ui'
 import PlanView from './views/PlanView'
@@ -30,7 +32,8 @@ function readTab(): Tab {
 
 export default function App() {
   const { t, i18n } = useTranslation()
-  const { state } = useStore()
+  const { state, dispatch } = useStore()
+  const { park, status, retry } = useParkStatus()
   const [tab, setTab] = useState<Tab>(readTab)
   const toast = useToast()
   const xp = totals(state.xp).today
@@ -48,7 +51,9 @@ export default function App() {
         <div className="grid h-10 w-10 place-items-center rounded-2xl bg-jungle-800 text-xl shadow-inner" aria-hidden>🧭</div>
         <div className="min-w-0 flex-1">
           <p className="font-display text-xl font-semibold leading-none text-jungle-900">ZooQuest</p>
-          <p className="truncate text-xs text-jungle-600">{t('tagline')}</p>
+          <button onClick={() => go('world')} className="block max-w-full truncate text-left text-xs font-semibold text-jungle-600 underline-offset-2 hover:underline">
+            📍 {loc(park.name, i18n.language.slice(0, 2))}
+          </button>
         </div>
         <span className="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-black text-amber-900" title="XP">⭐ {xp}</span>
         <select
@@ -61,7 +66,28 @@ export default function App() {
         </select>
       </header>
 
-      <main className="flex-1">
+      <main className="relative flex-1">
+        {status !== 'ready' && (
+          <div className="absolute inset-0 z-[650] grid place-items-center bg-sand-50/90 px-6 text-center backdrop-blur-sm" role="status">
+            {status === 'loading' ? (
+              <div className="space-y-3">
+                <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-jungle-200 border-t-clay-500" />
+                <p className="font-display text-xl text-jungle-900">{t('world.loading')}</p>
+                <p className="text-sm text-jungle-600">{state.zoo?.name}</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <p className="text-4xl">🗺️</p>
+                <p className="font-display text-xl text-jungle-900">{t('world.loadError')}</p>
+                <p className="text-sm text-jungle-600">{t('world.netError')}</p>
+                <div className="flex justify-center gap-2">
+                  <button onClick={retry} className="rounded-2xl bg-jungle-700 px-4 py-2.5 font-bold text-white">{t('world.retry')}</button>
+                  <button onClick={() => dispatch({ type: 'zoo', zoo: null })} className="rounded-2xl bg-white px-4 py-2.5 font-bold text-jungle-900 ring-1 ring-jungle-200">{t('world.back')}</button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
         <Suspense fallback={<div className="grid h-64 place-items-center text-4xl">🐾</div>}>
           {tab === 'plan' && <PlanView onStart={() => go('map')} />}
           {tab === 'map' && <MapView />}

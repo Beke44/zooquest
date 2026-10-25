@@ -1,4 +1,4 @@
-import { SPECIES } from '@/data/species'
+import { speciesById } from '@/data/species'
 import type { Capture, ParkPack, Rarity, ScheduleItem, Species } from '@/types'
 
 /** Gemini's rarity table (agreed in round 3). */
@@ -16,6 +16,26 @@ export const BONUS = {
   quietZone: 75, // less-visited enclosure (crowd relief)
   statusReport: 15, // community live-status tap
   quizCatchFactor: 0.5, // "Virtual seeker": animal hidden → quiz catch at half XP
+  passportFactor: 3, // Gemini r4: first visit to a zoo in a new country → ×3 that day
+  migration: 500, // Gemini r4: same species caught in a second country
+}
+
+const day = (t: number) => new Date(t).toISOString().slice(0, 10)
+
+/** Passport stamp: first zoo-visit day in a country the family hasn't collected in before. */
+export function passportActive(captures: Capture[], parkId: string, country: string, now = Date.now()): boolean {
+  if (!country) return false
+  const elsewhere = captures.some((c) => c.country === country && c.parkId !== parkId)
+  const earlierHere = captures.some((c) => c.parkId === parkId && day(c.at) !== day(now))
+  return !elsewhere && !earlierHere
+}
+
+/** Migration bonus: this species was already caught in a different country. */
+export function migrationBonus(captures: Capture[], speciesId: string, country: string): boolean {
+  if (!country || speciesId.startsWith('osm:')) return false
+  const here = captures.some((c) => c.speciesId === speciesId && c.country === country)
+  const other = captures.some((c) => c.speciesId === speciesId && c.country && c.country !== country)
+  return other && !here
 }
 
 /** Within ±20 min of a feeding/keeper talk the animal counts as Legendary. */
@@ -46,7 +66,7 @@ export function completedZones(park: ParkPack, captures: Capture[]): string[] {
   const got = new Set(captures.filter((c) => c.parkId === park.id).map((c) => c.speciesId))
   const zones = new Map<string, string[]>()
   const ids = new Set(park.pois.flatMap((p) => (p.type === 'animal' ? p.species ?? [] : [])))
-  SPECIES.filter((s) => ids.has(s.id)).forEach((s) => zones.set(s.zone, [...(zones.get(s.zone) ?? []), s.id]))
+  Object.values(speciesById).filter((s) => ids.has(s.id)).forEach((s) => zones.set(s.zone, [...(zones.get(s.zone) ?? []), s.id]))
   return [...zones].filter(([, ids]) => ids.every((id) => got.has(id))).map(([z]) => z)
 }
 

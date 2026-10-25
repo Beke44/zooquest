@@ -45,6 +45,7 @@ const hu = {
     closed: 'Zárva',
     feedingSoon: 'Etetés {{t}}-kor',
     replanned: 'Útvonal újratervezve – Szafari Hős bónusz!',
+    noPaths: 'Nincs ellenőrzött útvonal – irány és távolság',
   },
   report: { clean: 'Tiszta', dirty: 'Koszos', queue: 'Nagy sor', closed: 'Zárva', active: 'Aktív az állat', sleeping: 'Alszik / bújik' },
   catch: {
@@ -59,6 +60,7 @@ const hu = {
     coop: 'Többen fotóztunk (+20%)',
     already: 'Ez már megvan – újabb fotó a naplóba',
     legendNow: 'Etetési idő – most Legendás, dupla pont!',
+    passport: 'Útlevél-pecsét napja ({{c}}): ma ×3 pont!',
   },
   collection: {
     title: 'Családi gyűjtemény',
@@ -72,7 +74,7 @@ const hu = {
     badges: 'Jelvények',
   },
   rarity: { common: 'Gyakori', rare: 'Ritka', epic: 'Epikus', legendary: 'Legendás' },
-  board: {
+  board: { countries: 'Országok',
     title: 'Családi ranglista',
     today: 'Ma', week: 'Heti liga', all: 'Örök',
     you: 'Ti',
@@ -83,6 +85,12 @@ const hu = {
     members: 'Hányan vagytok ma?',
   },
   world: {
+    current: 'Most itt jártok', covPaths: 'Utak', covAnimals: '{{n}} állat', covServices: 'Mosdók, büfék', covFeeding: 'Etetési idők',
+    search: 'Állatkert keresése', searchPh: 'Bármely állatkert a világon – pl. Schönbrunn', near: 'Állatkertek a közelemben',
+    notFound: 'Nem találtunk ilyen állatkertet.', netError: 'Nem sikerült elérni a térképszervert – próbáld újra pár másodperc múlva.',
+    noGeo: 'A helymeghatározás nem érhető el.', recent: 'Legutóbbi állatkertek', featured: 'Kiemelt állatkertek',
+    osmNote: 'Bármely állatkert térképét az OpenStreetMap-ből építjük fel. Ahol hiányos az adat, ott őszintén jelezzük.',
+    loading: 'Állatkert térképének építése…', loadError: 'Nem sikerült betölteni az állatkertet.', retry: 'Újra', back: 'Vissza Budapestre',
     title: 'A világ állatkertjei',
     live: 'Elérhető',
     soon: 'Hamarosan',
@@ -91,7 +99,7 @@ const hu = {
     voted: 'Köszi a szavazatot!',
     sub: 'Budapest a pilot. Minden állatkert egy nyílt „park pack” – bárki hozzájárulhat.',
   },
-  badges: {
+  badges: { migration: 'Vándorló', passport: 'Útlevél',
     first: 'Első fogás', hero: 'Szafari Hős', zone: 'Zóna-bajnok', helper: 'Segítő kéz', legend: 'Legenda-vadász', scholar: 'Kis tudós',
   },
   common: { min: 'perc', close: 'Bezárás', back: 'Vissza', approx: 'hozzávetőleges hely', data: 'Adatforrás' },
@@ -115,6 +123,7 @@ const en: Dict = {
     cantSee: 'Can’t see it', exit: 'Exit', nearest: 'Nearest: {{name}}', catch: 'Catch with a photo', tooFar: 'Get closer ({{m}} m)',
     report: 'How is it here?', reportThanks: 'Thanks! +{{p}} points for your family', closed: 'Closed', feedingSoon: 'Feeding at {{t}}',
     replanned: 'Route re-planned – Safari Hero bonus!',
+    noPaths: 'No verified route – direction and distance only',
   },
   report: { clean: 'Clean', dirty: 'Dirty', queue: 'Long queue', closed: 'Closed', active: 'Animal active', sleeping: 'Sleeping / hiding' },
   catch: {
@@ -123,22 +132,29 @@ const en: Dict = {
     wrong: 'Not quite – try again at the enclosure', caught: 'Caught! +{{p}} points', coop: 'Several of us took photos (+20%)',
     already: 'Already collected – a new photo goes to the journal',
     legendNow: 'Feeding time – Legendary now, double points!',
+    passport: 'Passport stamp day ({{c}}): ×3 points today!',
   },
   collection: {
     title: 'Family collection', progress: '{{a}} / {{b}} species', empty: 'Empty so far. Head to the map and catch your first animal!',
     real: 'Real photo', virtual: 'Card', fact: 'Did you know?', journal: 'Expedition journal', level: 'Level {{n}}', badges: 'Badges',
   },
   rarity: { common: 'Common', rare: 'Rare', epic: 'Epic', legendary: 'Legendary' },
-  board: {
+  board: { countries: 'Countries',
     title: 'Family leaderboard', today: 'Today', week: 'Weekly league', all: 'All-time', you: 'You',
     demo: 'Demo mode: sample families. A shared live leaderboard can be switched on with Supabase.',
     nickTitle: 'Your family nickname', nickHint: 'Only the nickname is public – never names, photos or location.', save: 'Save', members: 'How many of you today?',
   },
   world: {
+    current: 'You are visiting', covPaths: 'Paths', covAnimals: '{{n}} animals', covServices: 'Toilets & food', covFeeding: 'Feeding times',
+    search: 'Search zoos', searchPh: 'Any zoo in the world – e.g. Schönbrunn', near: 'Zoos near me',
+    notFound: 'No zoo found with that name.', netError: 'Could not reach the map server – try again in a few seconds.',
+    noGeo: 'Location is not available.', recent: 'Recent zoos', featured: 'Featured zoos',
+    osmNote: 'Every zoo map is built from OpenStreetMap. Where data is missing, we say so.',
+    loading: 'Building the zoo map…', loadError: 'Could not load this zoo.', retry: 'Retry', back: 'Back to Budapest',
     title: 'Zoos of the world', live: 'Available', soon: 'Coming soon', open: 'Open', request: 'Vote for it', voted: 'Thanks for voting!',
     sub: 'Budapest is the pilot. Every zoo is an open “park pack” anyone can contribute to.',
   },
-  badges: { first: 'First catch', hero: 'Safari Hero', zone: 'Zone champion', helper: 'Helping hand', legend: 'Legend hunter', scholar: 'Little scholar' },
+  badges: { migration: 'Migrator', passport: 'Passport', first: 'First catch', hero: 'Safari Hero', zone: 'Zone champion', helper: 'Helping hand', legend: 'Legend hunter', scholar: 'Little scholar' },
   common: { min: 'min', close: 'Close', back: 'Back', approx: 'approximate location', data: 'Data source' },
 }
 
@@ -158,6 +174,7 @@ const de: Dict = {
     cantSee: 'Nicht zu sehen', exit: 'Ausgang', nearest: 'Am nächsten: {{name}}', catch: 'Mit Foto fangen', tooFar: 'Geh näher ran ({{m}} m)',
     report: 'Wie ist es hier?', reportThanks: 'Danke! +{{p}} Punkte für eure Familie', closed: 'Geschlossen', feedingSoon: 'Fütterung um {{t}}',
     replanned: 'Route neu geplant – Safari-Held-Bonus!',
+    noPaths: 'Keine geprüfte Route – nur Richtung und Entfernung',
   },
   report: { clean: 'Sauber', dirty: 'Schmutzig', queue: 'Lange Schlange', closed: 'Geschlossen', active: 'Tier aktiv', sleeping: 'Schläft / versteckt' },
   catch: {
@@ -166,22 +183,29 @@ const de: Dict = {
     wrong: 'Leider nein – versucht es am Gehege noch einmal', caught: 'Gefangen! +{{p}} Punkte', coop: 'Mehrere haben fotografiert (+20 %)',
     already: 'Schon gesammelt – neues Foto kommt ins Tagebuch',
     legendNow: 'Fütterungszeit – jetzt Legendär, doppelte Punkte!',
+    passport: 'Passstempel-Tag ({{c}}): heute ×3 Punkte!',
   },
   collection: {
     title: 'Familiensammlung', progress: '{{a}} / {{b}} Arten', empty: 'Noch leer. Ab zur Karte und das erste Tier fangen!',
     real: 'Echtes Foto', virtual: 'Karte', fact: 'Schon gewusst?', journal: 'Expeditionstagebuch', level: 'Level {{n}}', badges: 'Abzeichen',
   },
   rarity: { common: 'Häufig', rare: 'Selten', epic: 'Episch', legendary: 'Legendär' },
-  board: {
+  board: { countries: 'Länder',
     title: 'Familien-Rangliste', today: 'Heute', week: 'Wochenliga', all: 'Ewig', you: 'Ihr',
     demo: 'Demo-Modus: Beispielfamilien. Eine gemeinsame Live-Rangliste lässt sich mit Supabase aktivieren.',
     nickTitle: 'Euer Familien-Spitzname', nickHint: 'Nur der Spitzname ist öffentlich – nie Namen, Fotos oder Standort.', save: 'Speichern', members: 'Wie viele seid ihr heute?',
   },
   world: {
+    current: 'Ihr besucht', covPaths: 'Wege', covAnimals: '{{n}} Tiere', covServices: 'WCs & Essen', covFeeding: 'Fütterungszeiten',
+    search: 'Zoos suchen', searchPh: 'Jeder Zoo der Welt – z. B. Schönbrunn', near: 'Zoos in meiner Nähe',
+    notFound: 'Kein Zoo mit diesem Namen gefunden.', netError: 'Kartenserver nicht erreichbar – bitte gleich noch einmal versuchen.',
+    noGeo: 'Standort nicht verfügbar.', recent: 'Zuletzt besucht', featured: 'Ausgewählte Zoos',
+    osmNote: 'Jede Zookarte entsteht aus OpenStreetMap. Wo Daten fehlen, sagen wir es.',
+    loading: 'Zookarte wird erstellt…', loadError: 'Zoo konnte nicht geladen werden.', retry: 'Erneut', back: 'Zurück nach Budapest',
     title: 'Zoos der Welt', live: 'Verfügbar', soon: 'Demnächst', open: 'Öffnen', request: 'Dafür stimmen', voted: 'Danke für deine Stimme!',
     sub: 'Budapest ist der Pilot. Jeder Zoo ist ein offenes „Park-Pack“, zu dem jeder beitragen kann.',
   },
-  badges: { first: 'Erster Fang', hero: 'Safari-Held', zone: 'Zonen-Champion', helper: 'Helfende Hand', legend: 'Legendenjäger', scholar: 'Kleiner Forscher' },
+  badges: { migration: 'Zugvogel', passport: 'Reisepass', first: 'Erster Fang', hero: 'Safari-Held', zone: 'Zonen-Champion', helper: 'Helfende Hand', legend: 'Legendenjäger', scholar: 'Kleiner Forscher' },
   common: { min: 'Min.', close: 'Schließen', back: 'Zurück', approx: 'ungefährer Ort', data: 'Datenquelle' },
 }
 
@@ -201,6 +225,7 @@ const es: Dict = {
     cantSee: 'No se ve', exit: 'Salida', nearest: 'Más cercano: {{name}}', catch: 'Atrapar con foto', tooFar: 'Acércate ({{m}} m)',
     report: '¿Cómo está esto?', reportThanks: '¡Gracias! +{{p}} puntos para la familia', closed: 'Cerrado', feedingSoon: 'Comida a las {{t}}',
     replanned: 'Ruta replanificada – ¡bonus Héroe Safari!',
+    noPaths: 'Sin ruta verificada: solo dirección y distancia',
   },
   report: { clean: 'Limpio', dirty: 'Sucio', queue: 'Mucha cola', closed: 'Cerrado', active: 'Animal activo', sleeping: 'Durmiendo / escondido' },
   catch: {
@@ -209,22 +234,29 @@ const es: Dict = {
     wrong: 'Casi – probad otra vez en el recinto', caught: '¡Atrapado! +{{p}} puntos', coop: 'Varios hicimos fotos (+20 %)',
     already: 'Ya lo tenéis – la nueva foto va al diario',
     legendNow: '¡Hora de comer – ahora Legendario, puntos dobles!',
+    passport: 'Día de sello de pasaporte ({{c}}): ¡puntos ×3 hoy!',
   },
   collection: {
     title: 'Colección familiar', progress: '{{a}} / {{b}} especies', empty: 'Aún vacía. ¡Id al mapa y atrapad el primer animal!',
     real: 'Foto real', virtual: 'Carta', fact: '¿Sabías que…?', journal: 'Diario de expedición', level: 'Nivel {{n}}', badges: 'Insignias',
   },
   rarity: { common: 'Común', rare: 'Raro', epic: 'Épico', legendary: 'Legendario' },
-  board: {
+  board: { countries: 'Países',
     title: 'Ranking familiar', today: 'Hoy', week: 'Liga semanal', all: 'Histórico', you: 'Vosotros',
     demo: 'Modo demo: familias de ejemplo. El ranking compartido se activa con Supabase.',
     nickTitle: 'Apodo de vuestra familia', nickHint: 'Solo el apodo es público – nunca nombres, fotos ni ubicación.', save: 'Guardar', members: '¿Cuántos sois hoy?',
   },
   world: {
+    current: 'Estáis visitando', covPaths: 'Caminos', covAnimals: '{{n}} animales', covServices: 'Aseos y comida', covFeeding: 'Horarios de comida',
+    search: 'Buscar zoológicos', searchPh: 'Cualquier zoo del mundo – p. ej. Schönbrunn', near: 'Zoos cerca de mí',
+    notFound: 'No encontramos ese zoológico.', netError: 'No se pudo contactar el servidor de mapas: inténtalo en unos segundos.',
+    noGeo: 'La ubicación no está disponible.', recent: 'Zoos recientes', featured: 'Zoos destacados',
+    osmNote: 'Cada mapa se construye con OpenStreetMap. Si faltan datos, lo decimos.',
+    loading: 'Construyendo el mapa del zoo…', loadError: 'No se pudo cargar este zoo.', retry: 'Reintentar', back: 'Volver a Budapest',
     title: 'Zoológicos del mundo', live: 'Disponible', soon: 'Próximamente', open: 'Abrir', request: 'Votar', voted: '¡Gracias por votar!',
     sub: 'Budapest es el piloto. Cada zoo es un “park pack” abierto al que cualquiera puede contribuir.',
   },
-  badges: { first: 'Primera captura', hero: 'Héroe Safari', zone: 'Campeón de zona', helper: 'Mano amiga', legend: 'Cazaleyendas', scholar: 'Pequeño sabio' },
+  badges: { migration: 'Migrante', passport: 'Pasaporte', first: 'Primera captura', hero: 'Héroe Safari', zone: 'Campeón de zona', helper: 'Mano amiga', legend: 'Cazaleyendas', scholar: 'Pequeño sabio' },
   common: { min: 'min', close: 'Cerrar', back: 'Atrás', approx: 'ubicación aproximada', data: 'Fuente de datos' },
 }
 

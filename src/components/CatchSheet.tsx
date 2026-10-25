@@ -4,7 +4,7 @@ import { Camera, HelpCircle, Users } from 'lucide-react'
 import { loc } from '@/i18n'
 import { usePark } from '@/lib/park'
 import { useStore } from '@/lib/store'
-import { catchPoints, completedZones, effectiveRarity, BONUS } from '@/lib/scoring'
+import { catchPoints, completedZones, effectiveRarity, migrationBonus, passportActive, BONUS } from '@/lib/scoring'
 import { compressImage, isFreshShot, savePhoto } from '@/lib/photos'
 import { toast } from '@/lib/toast'
 import type { Poi, Species } from '@/types'
@@ -39,9 +39,14 @@ export default function CatchSheet({ poi, sp, distance, accuracy, demo, onClose 
 
   const finish = (method: 'photo' | 'quiz', photoKey?: string, extra = 0) => {
     const base = catchPoints({ rarity, method, coop, quiet })
-    const points = (already ? Math.round(base * 0.2) : base) + extra
+    const country = park.country
+    const passport = passportActive(state.captures, park.id, country)
+    const migr = migrationBonus(state.captures, sp.id, country)
+    const points = Math.round((already ? base * 0.2 : base) * (passport ? BONUS.passportFactor : 1)) + extra + (migr ? BONUS.migration : 0)
+    if (passport) dispatch({ type: 'badge', id: `passport:${country}` })
+    if (migr) dispatch({ type: 'badge', id: 'migration' })
     const before = completedZones(park, state.captures)
-    const cap = { id: crypto.randomUUID?.() ?? String(Date.now()), speciesId: sp.id, poiId: poi.id, parkId: park.id, at: Date.now(), photoKey, method, points }
+    const cap = { id: crypto.randomUUID?.() ?? String(Date.now()), speciesId: sp.id, poiId: poi.id, parkId: park.id, at: Date.now(), photoKey, method, points, country }
     dispatch({ type: 'capture', capture: cap })
     if (!state.captures.length) dispatch({ type: 'badge', id: 'first' })
     if (rarity === 'legendary') dispatch({ type: 'badge', id: 'legend' })
@@ -81,6 +86,9 @@ export default function CatchSheet({ poi, sp, distance, accuracy, demo, onClose 
             <p className="rounded-2xl bg-amber-100 px-3 py-2 text-center text-sm font-bold text-amber-900">✨ {t('catch.legendNow')}</p>
           )}
           {already && <p className="text-center text-sm text-jungle-700">{t('catch.already')}</p>}
+          {passportActive(state.captures, park.id, park.country) && (
+            <p className="rounded-2xl bg-sky-100 px-3 py-2 text-center text-sm font-bold text-sky-900">🛂 {t('catch.passport', { c: park.country })}</p>
+          )}
           <label className="flex items-center justify-between rounded-2xl bg-white px-3 py-2 ring-1 ring-black/5">
             <span className="flex items-center gap-2 font-semibold text-jungle-900"><Users className="h-4 w-4" />{t('catch.coop')}</span>
             <input type="checkbox" checked={coop} onChange={(e) => setCoop(e.target.checked)} className="h-5 w-5 accent-jungle-700" />

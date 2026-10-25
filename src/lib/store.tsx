@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useReducer, type ReactNode } from 'react'
 import type { Capture, StatusReport } from '@/types'
+import type { ZooRef } from './osmPack'
 import { dayKey, weekKey } from './leaderboard'
 
 export interface XpEvent { at: number; points: number; reason: string }
@@ -31,6 +32,9 @@ export interface State {
   visited: string[]
   parkId: string
   votes: string[]
+  /** the zoo being visited; null = Budapest (built-in pilot) */
+  zoo: ZooRef | null
+  recentZoos: ZooRef[]
 }
 
 type Action =
@@ -42,6 +46,7 @@ type Action =
   | { type: 'visit'; poiId: string }
   | { type: 'family'; family: Partial<Family> }
   | { type: 'vote'; zooId: string }
+  | { type: 'zoo'; zoo: ZooRef | null }
   | { type: 'reset' }
 
 const KEY = 'zooquest-state-v1'
@@ -50,7 +55,7 @@ function fresh(): State {
   const id = (crypto.randomUUID?.() ?? String(Math.random()).slice(2)).slice(0, 12)
   return {
     family: { id, nick: '', emoji: '🦁', members: 3 },
-    captures: [], reports: [], xp: [], helper: [], badges: [], plan: null, visited: [], parkId: 'budapest', votes: [],
+    captures: [], reports: [], xp: [], helper: [], badges: [], plan: null, visited: [], parkId: 'budapest', votes: [], zoo: null, recentZoos: [],
   }
 }
 
@@ -86,6 +91,13 @@ function reducer(s: State, a: Action): State {
       return { ...s, family: { ...s.family, ...a.family } }
     case 'vote':
       return s.votes.includes(a.zooId) ? s : { ...s, votes: [...s.votes, a.zooId] }
+    case 'zoo': {
+      const id = a.zoo?.id ?? 'budapest'
+      if (id === s.parkId) return s
+      // a new zoo = a new day plan; collection and XP stay (world passport)
+      const recent = a.zoo ? [a.zoo, ...s.recentZoos.filter((z) => z.id !== a.zoo!.id)].slice(0, 8) : s.recentZoos
+      return { ...s, zoo: a.zoo, parkId: id, plan: null, visited: [], recentZoos: recent }
+    }
     case 'reset':
       return fresh()
   }

@@ -1,7 +1,7 @@
 import type { WorldZoo } from '@/types'
 
-// Global roadmap. Budapest is the live pilot; the others are open
-// "park packs" waiting for data (community + zoo partners).
+// Featured zoos on every continent. Budapest has a curated pack; every
+// other zoo (these and any found by search) is built live from OpenStreetMap.
 export const WORLD_ZOOS: WorldZoo[] = [
   { id: 'budapest', name: 'Fővárosi Állat- és Növénykert', city: 'Budapest', country: 'HU', flag: '🇭🇺', lat: 47.5185, lon: 19.0789, status: 'live' },
   { id: 'nyiregyhaza', name: 'Nyíregyházi Állatpark', city: 'Nyíregyháza', country: 'HU', flag: '🇭🇺', lat: 47.9925, lon: 21.7275, status: 'soon' },
@@ -19,4 +19,24 @@ export const WORLD_ZOOS: WorldZoo[] = [
   { id: 'singapore', name: 'Singapore Zoo', city: 'Singapore', country: 'SG', flag: '🇸🇬', lat: 1.4043, lon: 103.7930, status: 'soon' },
   { id: 'taronga', name: 'Taronga Zoo', city: 'Sydney', country: 'AU', flag: '🇦🇺', lat: -33.8431, lon: 151.2411, status: 'soon' },
   { id: 'ueno', name: 'Ueno Zoo', city: 'Tokyo', country: 'JP', flag: '🇯🇵', lat: 35.7166, lon: 139.7714, status: 'soon' },
+  { id: 'zurich', name: 'Zoo Zürich', city: 'Zürich', country: 'CH', flag: '🇨🇭', lat: 47.3849, lon: 8.5745, status: 'soon' },
+  { id: 'amsterdam', name: 'ARTIS', city: 'Amsterdam', country: 'NL', flag: '🇳🇱', lat: 52.3660, lon: 4.9166, status: 'soon' },
+  { id: 'copenhagen', name: 'Zoologisk Have København', city: 'København', country: 'DK', flag: '🇩🇰', lat: 55.6726, lon: 12.5214, status: 'soon' },
+  { id: 'wroclaw', name: 'Ogród Zoologiczny we Wrocławiu', city: 'Wrocław', country: 'PL', flag: '🇵🇱', lat: 51.1043, lon: 17.0748, status: 'soon' },
+  { id: 'bratislava', name: 'Zoologická záhrada Bratislava', city: 'Bratislava', country: 'SK', flag: '🇸🇰', lat: 48.1610, lon: 17.0710, status: 'soon' },
+  { id: 'zagreb', name: 'Zoološki vrt Zagreb', city: 'Zagreb', country: 'HR', flag: '🇭🇷', lat: 45.8155, lon: 16.0181, status: 'soon' },
+  { id: 'rome', name: 'Bioparco di Roma', city: 'Roma', country: 'IT', flag: '🇮🇹', lat: 41.9205, lon: 12.4840, status: 'soon' },
+  { id: 'lisbon', name: 'Jardim Zoológico de Lisboa', city: 'Lisboa', country: 'PT', flag: '🇵🇹', lat: 38.7432, lon: -9.1693, status: 'soon' },
+  { id: 'paris', name: 'Parc zoologique de Paris', city: 'Paris', country: 'FR', flag: '🇫🇷', lat: 48.8325, lon: 2.4167, status: 'soon' },
+  { id: 'chester', name: 'Chester Zoo', city: 'Chester', country: 'GB', flag: '🇬🇧', lat: 53.2266, lon: -2.8846, status: 'soon' },
+  { id: 'toronto', name: 'Toronto Zoo', city: 'Toronto', country: 'CA', flag: '🇨🇦', lat: 43.8177, lon: -79.1859, status: 'soon' },
+  { id: 'smithsonian', name: "Smithsonian's National Zoo", city: 'Washington', country: 'US', flag: '🇺🇸', lat: 38.9296, lon: -77.0498, status: 'soon' },
+  { id: 'chapultepec', name: 'Zoológico de Chapultepec', city: 'Ciudad de México', country: 'MX', flag: '🇲🇽', lat: 19.4234, lon: -99.1876, status: 'soon' },
+  { id: 'buenosaires', name: 'Ecoparque Buenos Aires', city: 'Buenos Aires', country: 'AR', flag: '🇦🇷', lat: -34.5776, lon: -58.4122, status: 'soon' },
+  { id: 'pretoria', name: 'National Zoological Garden', city: 'Pretoria', country: 'ZA', flag: '🇿🇦', lat: -25.7380, lon: 28.1890, status: 'soon' },
+  { id: 'beijing', name: 'Beijing Zoo', city: 'Beijing', country: 'CN', flag: '🇨🇳', lat: 39.9400, lon: 116.3380, status: 'soon' },
+  { id: 'seoul', name: 'Seoul Grand Park Zoo', city: 'Gwacheon', country: 'KR', flag: '🇰🇷', lat: 37.4270, lon: 127.0170, status: 'soon' },
+  { id: 'melbourne', name: 'Melbourne Zoo', city: 'Melbourne', country: 'AU', flag: '🇦🇺', lat: -37.7840, lon: 144.9515, status: 'soon' },
+  { id: 'auckland', name: 'Auckland Zoo', city: 'Auckland', country: 'NZ', flag: '🇳🇿', lat: -36.8640, lon: 174.7190, status: 'soon' },
+  { id: 'dubai', name: 'Dubai Safari Park', city: 'Dubai', country: 'AE', flag: '🇦🇪', lat: 25.1773, lon: 55.4570, status: 'soon' },
 ]

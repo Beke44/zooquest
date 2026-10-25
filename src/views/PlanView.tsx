@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Baby, CloudRain, Footprints, Sun, Clock, Bell, MapPinned, Sparkles } from 'lucide-react'
 import { loc } from '@/i18n'
@@ -12,15 +12,23 @@ import { speciesById } from '@/data/species'
 export default function PlanView({ onStart }: { onStart: () => void }) {
   const { t, i18n } = useTranslation()
   const lang = i18n.language
-  const { park, graph, speciesInPark, poi, entrance } = usePark()
+  const { park, graph: walkGraph, stepFreeGraph, speciesInPark, poi, entrance } = usePark()
   const { state, dispatch } = useStore()
-  const [favs, setFavs] = useState<string[]>(['lion', 'zebra', 'elephant'].filter((id) => speciesInPark.some((s) => s.id === id)))
+  const defaults = () => {
+    const pref = ['lion', 'zebra', 'elephant', 'giraffe', 'penguin', 'tiger'].filter((id) => speciesInPark.some((s) => s.id === id))
+    return (pref.length ? pref : speciesInPark.map((s) => s.id)).slice(0, 3)
+  }
+  const [favs, setFavs] = useState<string[]>(defaults)
+  const [showAll, setShowAll] = useState(false)
+  // a different zoo was opened → fresh favourites and plan
+  useEffect(() => { setFavs(defaults()); setResult(null) }, [park.id]) // eslint-disable-line react-hooks/exhaustive-deps
   const [hours, setHours] = useState(3)
   const [stroller, setStroller] = useState(false)
   const [shade, setShade] = useState(false)
   const [rain, setRain] = useState(false)
   const [kids, setKids] = useState(true)
   const [result, setResult] = useState<PlanResult | null>(null)
+  const graph = stroller ? stepFreeGraph : walkGraph
 
   const start: LatLon = entrance ? [entrance.lat, entrance.lon] : park.center
 
@@ -67,6 +75,7 @@ export default function PlanView({ onStart }: { onStart: () => void }) {
       <section>
         <p className="text-xs font-bold uppercase tracking-[0.2em] text-clay-600">{loc(park.name, lang)}</p>
         <h1 className="font-display text-3xl font-semibold leading-tight text-jungle-900">{t('plan.title')}</h1>
+        {park.id !== 'budapest' && park.dataNote && <p className="mt-1 text-xs text-jungle-600">{loc(park.dataNote, lang)}</p>}
       </section>
 
       <Card className="p-4">
@@ -81,11 +90,13 @@ export default function PlanView({ onStart }: { onStart: () => void }) {
       <Card className="p-4">
         <p className="mb-3 font-bold text-jungle-900">{t('plan.favs')}</p>
         <div className="flex flex-wrap gap-2">
-          {speciesInPark.map((s) => (
+          {(showAll ? speciesInPark : speciesInPark.slice(0, 24)).map((s) => (
             <Chip key={s.id} active={favs.includes(s.id)} onClick={() => toggle(s.id)}>
               <span className="text-lg leading-none">{s.emoji}</span> {loc(s.name, lang)}
             </Chip>
           ))}
+          {!showAll && speciesInPark.length > 24 && <Chip onClick={() => setShowAll(true)}>+{speciesInPark.length - 24}</Chip>}
+          {speciesInPark.length === 0 && <p className="text-sm text-jungle-700">{t('world.notFound')}</p>}
         </div>
       </Card>
 
@@ -136,7 +147,7 @@ export default function PlanView({ onStart }: { onStart: () => void }) {
         </Card>
       )}
 
-      <section>
+      {park.routes.length > 0 && <section>
         <h2 className="mb-2 font-display text-xl font-semibold text-jungle-900">{t('plan.theme')}</h2>
         <div className="grid gap-3 sm:grid-cols-2">
           {park.routes.map((r) => (
@@ -150,7 +161,7 @@ export default function PlanView({ onStart }: { onStart: () => void }) {
             </button>
           ))}
         </div>
-      </section>
+      </section>}
 
       {feedings.length > 0 && (
         <Card className="p-4">

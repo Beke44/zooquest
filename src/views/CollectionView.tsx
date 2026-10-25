@@ -11,7 +11,8 @@ import AnimalCard from '@/components/AnimalCard'
 import { Card, Sheet } from '@/components/ui'
 import type { Capture } from '@/types'
 
-const BADGE_ICON: Record<string, string> = { first: '🎯', hero: '🦸', zone: '🏆', helper: '🤝', legend: '🌟', scholar: '🎓' }
+const BADGE_ICON: Record<string, string> = { first: '🎯', hero: '🦸', zone: '🏆', helper: '🤝', legend: '🌟', scholar: '🎓', migration: '🕊️' }
+const flag = (cc: string) => (/^[A-Z]{2}$/.test(cc) ? String.fromCodePoint(...[...cc].map((c) => 0x1f1e6 + c.charCodeAt(0) - 65)) : '🌍')
 
 export default function CollectionView() {
   const { t, i18n } = useTranslation()
@@ -29,7 +30,7 @@ export default function CollectionView() {
       <header className="flex items-end justify-between">
         <div>
           <h1 className="font-display text-3xl font-semibold text-jungle-900">{t('collection.title')}</h1>
-          <p className="text-jungle-700">{t('collection.progress', { a: [...got].filter((id) => speciesInPark.some((s) => s.id === id)).length, b: speciesInPark.length })}</p>
+          <p className="text-jungle-700">🌍 {new Set(state.captures.map((c) => c.speciesId)).size} · {t('collection.progress', { a: [...got].filter((id) => speciesInPark.some((s) => s.id === id)).length, b: speciesInPark.length })}</p>
         </div>
         <div className="text-right">
           <p className="font-display text-2xl text-jungle-900">{t('collection.level', { n: lvl.lvl })}</p>
@@ -40,11 +41,22 @@ export default function CollectionView() {
         </div>
       </header>
 
-      {state.badges.length > 0 && (
+      {state.badges.some((b) => b.startsWith('passport:')) && (
+        <Card className="p-4">
+          <p className="mb-2 font-bold text-jungle-900">🛂 {t('badges.passport')}</p>
+          <div className="flex flex-wrap gap-2">
+            {state.badges.filter((b) => b.startsWith('passport:')).map((b) => (
+              <span key={b} className="grid h-14 w-14 place-items-center rounded-full border-2 border-dashed border-clay-400 bg-sand-50 text-2xl" title={b.slice(9)}>{flag(b.slice(9))}</span>
+            ))}
+          </div>
+        </Card>
+      )}
+
+      {state.badges.some((b) => !b.startsWith('passport:')) && (
         <Card className="p-4">
           <p className="mb-2 font-bold text-jungle-900">{t('collection.badges')}</p>
           <div className="flex flex-wrap gap-2">
-            {state.badges.map((b) => (
+            {state.badges.filter((b) => !b.startsWith('passport:')).map((b) => (
               <span key={b} className="inline-flex items-center gap-1 rounded-full bg-sand-100 px-3 py-1.5 text-sm font-bold text-jungle-900">
                 {BADGE_ICON[b]} {t(`badges.${b}`)}
               </span>

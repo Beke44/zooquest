@@ -71,7 +71,9 @@ export default function MapView() {
   const lang = i18n.language
   const { park, graph, stepFreeGraph, poi, entrance } = usePark()
   const { state, dispatch } = useStore()
-  const geo = useGeo(park.center, 1200)
+  // the family counts as 'at the zoo' within the park's own size + 500 m
+  const parkRadius = useMemo(() => Math.max(1200, dist(park.bounds[0], park.bounds[1]) / 2 + 500), [park])
+  const geo = useGeo(park.center, parkRadius)
   const [selected, setSelected] = useState<Poi | null>(null)
   const [catching, setCatching] = useState<Poi | null>(null)
   const [target, setTarget] = useState<string | null>(null)
@@ -205,10 +207,13 @@ export default function MapView() {
             </div>
             <div className="text-right">
               <p className="font-display text-xl">{formatDistance(route?.metres ?? nextDist ?? 0)}</p>
-              <p className="text-xs text-jungle-200">{walkMinutes(route?.metres ?? 0)} {t('common.min')}</p>
+              <p className="text-xs text-jungle-200">{walkMinutes(route?.metres ?? (nextDist ?? 0) * 1.3)} {t('common.min')}</p>
             </div>
             {target && <button onClick={() => setTarget(null)} aria-label={t('common.close')}><X className="h-5 w-5" /></button>}
           </div>
+        )}
+        {next && here && !park.paths.length && (
+          <p className="pointer-events-auto rounded-2xl bg-sand-100/95 px-3 py-1.5 text-xs font-bold text-sand-600 shadow-sm">{t('map.noPaths')}</p>
         )}
       </div>
 

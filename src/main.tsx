@@ -5,11 +5,14 @@ import './index.css'
 import './i18n'
 import App from './App'
 import { StoreProvider } from './lib/store'
+import { ParkProvider } from './lib/park'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <StoreProvider>
-      <App />
+      <ParkProvider>
+        <App />
+      </ParkProvider>
     </StoreProvider>
   </StrictMode>,
 )

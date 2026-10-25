@@ -159,4 +159,25 @@ export const SPECIES: Species[] = [
   },
 ]
 
-export const speciesById = Object.fromEntries(SPECIES.map((s) => [s.id, s]))
+/**
+ * Registry of every species card the app knows: the hand-written cards
+ * above plus cards generated from OpenStreetMap for other zoos. Generated
+ * cards are remembered in the browser so a collection from Berlin still
+ * renders while the family is in Budapest.
+ */
+export const speciesById: Record<string, Species> = Object.fromEntries(SPECIES.map((s) => [s.id, s]))
+const REG_KEY = 'zq-species-v1'
+try {
+  const saved = JSON.parse(localStorage.getItem(REG_KEY) ?? '[]') as Species[]
+  saved.forEach((s) => { if (!speciesById[s.id]) speciesById[s.id] = s })
+} catch { /* storage unavailable */ }
+
+export function registerSpecies(list: Species[]) {
+  const fresh = list.filter((s) => !speciesById[s.id])
+  fresh.forEach((s) => { speciesById[s.id] = s })
+  if (!fresh.length) return
+  try {
+    const dynamic = Object.values(speciesById).filter((s) => s.id.startsWith('osm:'))
+    localStorage.setItem(REG_KEY, JSON.stringify(dynamic.slice(-1500)))
+  } catch { /* quota – cards still work this session */ }
+}

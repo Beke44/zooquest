@@ -80,6 +80,8 @@ export interface ParkPack {
   hours?: string
   sources: string[]
   dataNote?: Localized
+  /** what OSM actually knows about this zoo (ChatGPT round 4: be honest about gaps) */
+  coverage?: { paths: boolean; stepsMapped: boolean; animals: number; facilities: number }
 }
 
 export interface WorldZoo {
@@ -104,6 +106,8 @@ export interface Capture {
   points: number
   lat?: number
   lon?: number
+  /** country of the zoo (passport stamps, migration bonus) */
+  country?: string
 }
 
 export interface StatusReport {
