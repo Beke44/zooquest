@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { BUDAPEST } from '@/data/budapest'
-import { speciesById } from '@/data/species'
+import { registerSpecies, speciesById } from '@/data/species'
 import type { ParkPack, Poi, Species } from '@/types'
 import { WalkGraph } from './router'
 import { loadPack, type ZooRef } from './osmPack'
@@ -50,7 +50,20 @@ export function ParkProvider({ children }: { children: ReactNode }) {
     setStatus('loading')
     ;(async () => {
       const cached = await getCachedPack(zoo.id)
-      if (cached && alive) { setPark(cached); setStatus('ready'); return }
+      if (cached && alive) { registerSpecies(cached.species ?? []); setPark(cached); setStatus('ready'); return }
+      // prebuilt by GitHub Actions for featured zoos → instant
+      try {
+        const r = await fetch(`./packs/${zoo.id}.json`, { signal: ac.signal })
+        if (r.ok && r.headers.get('content-type')?.includes('json')) {
+          const pre = (await r.json()) as ParkPack
+          if (!alive) return
+          registerSpecies(pre.species ?? [])
+          await cachePack(pre)
+          setPark(pre)
+          setStatus('ready')
+          return
+        }
+      } catch { /* not prebuilt – build live */ }
       try {
         const pack = await loadPack(zoo, ac.signal)
         if (!alive) return
@@ -81,6 +94,7 @@ export function usePark() {
     const speciesInPark: Species[] = [...new Set(animalPois.flatMap((p) => p.species!))]
       .map((id) => speciesById[id])
       .filter(Boolean)
+      .sort((a, b) => Number(a.id.startsWith('osm:')) - Number(b.id.startsWith('osm:')))
     const poiOfSpecies = (sid: string): Poi | undefined => animalPois.find((p) => p.species!.includes(sid))
     const poi = (pid: string) => park.pois.find((p) => p.id === pid)
     const entrance = park.pois.find((p) => p.id === 'main-gate') ?? park.pois.find((p) => p.type === 'entrance') ?? null

@@ -61,6 +61,9 @@ export default function WorldView({ onOpen }: { onOpen: () => void }) {
     if (z.id === 'budapest') return open(null)
     setBusy(z.id)
     try {
+      // prebuilt index from GitHub Actions: no Overpass round-trip at all
+      const pre = await fetch('./packs/featured.json').then((r) => (r.ok ? r.json() : {})).catch(() => ({})) as Record<string, ZooRef>
+      if (pre[z.id]) { open({ ...pre[z.id], name: z.name, city: z.city, country: z.country }); return }
       const hits = await zoosNear(z.lat, z.lon, undefined, 2500)
       // prefer the big area over a stray point (e.g. a gate tagged as zoo)
       const best = hits.find((h) => h.osmType !== 'node') ?? hits[0]

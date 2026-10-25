@@ -77,3 +77,10 @@ Merész ötletek: állataktivitás-előrejelző · „Mentsd meg a napot” újr
 
 ## Claude térképügynök
 Az Overpass API a sandboxból nem volt elérhető, ezért a valódi OSM-adatot István Chrome-jából töltöttük le (2026-10-25). Ebben 86 gyalogút, 6 lépcső, 19 faj pontos helye, 7 mosdó, 16 büfé és 11 ivókút szerepel. A programok a zoobudapest.com-ról származnak.
+
+## 4. kör – a világ összes állatkertje (2026-10-25)
+- Claude: bármely állatkert park packja futásidőben épül az OpenStreetMap-ből (Overpass). A kiemelt állatkerteket a GitHub Actions hetente előre legyártja, keresés Nominatimmal, közeli állatkertek Overpass-szal, 14 napos offline gyorsítótár.
+- ChatGPT: adatfedettség őszinte jelzése; nincs kitalált útvonal, csak irány és távolság; babakocsis útvonal csak lépcsőadat mellett; közösségi „hiányzó hely jelölése” ellenőrzéssel (következő lépés).
+- Gemini: országonkénti útlevélpecsét (×3 XP az első napon), migrációs bónusz (+500, ugyanaz a faj két országban), országok közti liga.
+- DeepSeek: kockázatok: Overpass/Nominatim limit (szerveroldali előgyártás + helyi keresési cache), OSM-csempék csak megnézett területről, régiónként hiányos adat (életképességi jelzés + kézi pótlás).
+- Első éles teszt (Schönbrunn): 159 út, 10 lépcső, 6 mosdó, 14 büfé, 11 játszótér, 60 állat, ebből 17 kézzel írt kártya.

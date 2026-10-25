@@ -221,6 +221,11 @@ export function buildPack(ref: ZooRef, els: OsmEl[]): ParkPack {
       const name = localizedFromTags(t.name || t['name:en'] ? t : { name: latin })
       const text = [t.name, t['name:en'], t['name:de'], t['species:en'], latin, t.zoo].filter(Boolean).join(' ')
       const card = cardFor(latin, text)
+      // enclosure/area names ("African Savannah", "Pandahaus") are places, not animals
+      if (!latin && !card && /savann|tropen|tropic|park\b|haus\b|house|ház\b|land\b|world|welt|polarium|heimtier|garten|garden|area|zone|enclosure|gehege|aviar|voliere|terrari|aquari|valley|forest|wald|insel|island|farm|bauernhof|hof\b/i.test(text)) {
+        add('attraction', localizedFromTags(t), c, { indoor: !!t.building || /haus|house|ház|polarium|terrari|aquari/i.test(text) })
+        continue
+      }
       const key = card ?? (latin ? `l:${latin.split(' ').slice(0, 2).join(' ')}` : `n:${slug(name.en || name.hu)}`)
       if (animalsByKey.has(key)) continue
       const poi = add('animal', name, c, { indoor: !!t.building || t.indoor === 'yes', osmName: t.name })
@@ -289,7 +294,7 @@ export function buildPack(ref: ZooRef, els: OsmEl[]): ParkPack {
   const today = new Date().toISOString().slice(0, 10)
   return {
     schemaVersion: 1, id: ref.id, version: `osm-${today}`, name, city: ref.city ?? '', country: ref.country ?? '',
-    center, bounds, boundary: hasRing ? boundary : undefined, pois: finalPois, paths: hasPaths ? paths : [], steps: hasPaths ? steps : [], schedule: [], routes,
+    center, bounds, boundary: hasRing ? boundary : undefined, species: generated, pois: finalPois, paths: hasPaths ? paths : [], steps: hasPaths ? steps : [], schedule: [], routes,
     coverage: { paths: hasPaths, stepsMapped: steps.length > 0, animals: animals.length, facilities },
     sources: [`https://www.openstreetmap.org/${ref.osmType}/${ref.osmId}`],
     dataNote: {

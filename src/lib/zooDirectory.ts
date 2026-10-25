@@ -59,6 +59,18 @@ const refOf = (t: ZooRef['osmType'], id: number, name: string, lat: number, lon:
 
 /** Search any zoo on Earth by name (Nominatim, 1 request per search). */
 export async function searchZoos(q: string, lang: string, signal?: AbortSignal): Promise<ZooRef[]> {
+  // DeepSeek r4: cache searches locally – fewer Nominatim requests, works offline
+  const key = `zq-search:${lang}:${q.toLowerCase()}`
+  try {
+    const hit = JSON.parse(localStorage.getItem(key) ?? 'null') as { at: number; refs: ZooRef[] } | null
+    if (hit && Date.now() - hit.at < TTL) return hit.refs
+  } catch { /* ignore */ }
+  const refs = await searchLive(q, lang, signal)
+  try { localStorage.setItem(key, JSON.stringify({ at: Date.now(), refs })) } catch { /* quota */ }
+  return refs
+}
+
+async function searchLive(q: string, lang: string, signal?: AbortSignal): Promise<ZooRef[]> {
   const run = async (query: string) => {
     const u = `https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=12&accept-language=${lang}&q=${encodeURIComponent(query)}`
     const r = await fetch(u, { signal })

@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  schedule:
+    - cron: '17 3 * * 1' # Mondays: refresh featured zoo maps from OpenStreetMap
 permissions:
   contents: read
   pages: write
@@ -21,6 +23,10 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Prebuild featured zoo packs (OpenStreetMap)
+        run: npx tsx scripts/build-packs.ts
+        timeout-minutes: 45
+        continue-on-error: true
       - run: npm run build
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
