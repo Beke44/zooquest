@@ -140,7 +140,7 @@ export default function WorldView({ onOpen }: { onOpen: () => void }) {
       </div>
       <div className="grid gap-2 sm:grid-cols-2">
         {WORLD_ZOOS.map((z) => (
-          <ZooRow key={z.id} flag={z.flag} name={z.name} sub={z.city} active={z.id === curId || (z.id === 'budapest' && curId === 'budapest')}
+          <ZooRow key={z.id} flag={z.flag} name={z.name} sub={z.city} active={z.id === curId || (!!z.osm && curId === `osm-${z.osm}`)}
             busy={busy === z.id} onOpen={() => openCurated(z)} label={t('world.open')} />
         ))}
       </div>

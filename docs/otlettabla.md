@@ -84,3 +84,5 @@ Az Overpass API a sandboxból nem volt elérhető, ezért a valódi OSM-adatot I
 - Gemini: országonkénti útlevélpecsét (×3 XP az első napon), migrációs bónusz (+500, ugyanaz a faj két országban), országok közti liga.
 - DeepSeek: kockázatok: Overpass/Nominatim limit (szerveroldali előgyártás + helyi keresési cache), OSM-csempék csak megnézett területről, régiónként hiányos adat (életképességi jelzés + kézi pótlás).
 - Első éles teszt (Schönbrunn): 159 út, 10 lépcső, 6 mosdó, 14 büfé, 11 játszótér, 60 állat, ebből 17 kézzel írt kártya.
+- Éles mérés (2026-10-25, otthoni hálózatról): Berlin 48 mp, Szingapúr ~40 mp első megnyitáskor, utána a gyorsítótárból azonnal. Berlin: 60 állat (18 kártya), 223 út; San Diego: 60 állat (14 kártya), 253 út, 11 mosdó; Szingapúr: 57 állat (16 kártya), 51 út, 8 mosdó.
+- Tanulság: az Overpass a GitHub Actions közös IP-címeit 429-cel tiltja, ezért a kiemelt állatkerteket nem a CI gyártja elő. Helyette a 35 kiemelt állatkert OSM-azonosítója be van építve, a lekérdezés könnyített, és a fő szerver újrapróbálása beépült.
