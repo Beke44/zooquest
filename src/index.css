@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(1200px 600px at 100% -10%, rgba(210, 173, 98, 0.18), transparent 60%),
+    radial-gradient(900px 500px at -10% 110%, rgba(95, 154, 99, 0.14), transparent 60%),
+    #fbf8f1;
+  color: #122b19;
+  font-family: 'Nunito Sans', system-ui, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.leaflet-container {
+  background: #e6efe2;
+  font-family: inherit;
+}
+
+@keyframes rise {
+  from { transform: translateY(16px); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+@keyframes pop {
+  0% { transform: scale(0.6) rotate(-6deg); opacity: 0; }
+  60% { transform: scale(1.08) rotate(2deg); opacity: 1; }
+  100% { transform: none; }
+}
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(209, 96, 58, 0.55); }
+  50% { box-shadow: 0 0 0 12px rgba(209, 96, 58, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}

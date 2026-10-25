@@ -1,0 +1,13 @@
+{
+  "name": "ZooQuest – családi állatkerti felfedezőtúra",
+  "short_name": "ZooQuest",
+  "description": "GPS-térkép, útvonaltervező és fotós állatgyűjtés a világ állatkertjeiben.",
+  "start_url": "./#plan",
+  "display": "standalone",
+  "background_color": "#fbf8f1",
+  "theme_color": "#1c4126",
+  "lang": "hu",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
