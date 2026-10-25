@@ -124,6 +124,7 @@ function Detail({ speciesId, captures }: { speciesId: string; captures: Capture[
   const withPhoto = captures.filter((c) => c.photoKey).sort((a, b) => b.at - a.at)[0]
   useEffect(() => {
     let alive = true
+    setPhoto(null)
     if (withPhoto?.photoKey) loadPhoto(withPhoto.photoKey).then((p) => alive && setPhoto(p))
     return () => { alive = false }
   }, [withPhoto?.photoKey])

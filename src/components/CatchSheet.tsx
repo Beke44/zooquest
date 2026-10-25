@@ -22,6 +22,7 @@ export default function CatchSheet({ poi, sp, distance, accuracy, demo, onClose 
 }) {
   const { t, i18n } = useTranslation()
   const lang = i18n.language
+  const guideLabel = ({ hu: 'Ismerd meg az állatot', en: 'Meet the animal', de: 'Lerne das Tier kennen', es: 'Conoce al animal' }[lang.slice(0, 2)] ?? 'Meet the animal')
   const { park } = usePark()
   const { state, dispatch } = useStore()
   const file = useRef<HTMLInputElement>(null)
@@ -90,7 +91,6 @@ export default function CatchSheet({ poi, sp, distance, accuracy, demo, onClose 
           {passportActive(state.captures, park.id, park.country) && (
             <p className="rounded-2xl bg-sky-100 px-3 py-2 text-center text-sm font-bold text-sky-900">🛂 {t('catch.passport', { c: park.country })}</p>
           )}
-          <AnimalGuide sp={sp} />
           <label className="flex items-center justify-between rounded-2xl bg-white px-3 py-2 ring-1 ring-black/5">
             <span className="flex items-center gap-2 font-semibold text-jungle-900"><Users className="h-4 w-4" />{t('catch.coop')}</span>
             <input type="checkbox" checked={coop} onChange={(e) => setCoop(e.target.checked)} className="h-5 w-5 accent-jungle-700" />
@@ -102,6 +102,10 @@ export default function CatchSheet({ poi, sp, distance, accuracy, demo, onClose 
           <Button variant="ghost" className="w-full" disabled={!inside} onClick={() => setMode('quiz')}>
             <HelpCircle className="h-5 w-5" />{t('catch.hidden')}
           </Button>
+          <details className="rounded-2xl bg-white/80 p-3 ring-1 ring-jungle-100">
+            <summary className="cursor-pointer font-bold text-jungle-800">{guideLabel}</summary>
+            <AnimalGuide sp={sp} />
+          </details>
         </div>
       )}
 

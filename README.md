@@ -89,3 +89,7 @@ Konfiguráció nélkül csak egyértelműen jelzett, eszközön tárolt piszkoza
 Minden gyűjteménykártya megnyitható a megszerzése előtt is. A meglévő érdekességet a tudományos név alapján lekért Wikipédia-ismertető egészíti ki; a nyelvi cikkváltozatot az angol cikk nyelvi hivatkozása választja ki. Hiányzó fordítás esetén az angol forrást külön jelöljük. A szöveg hét napig gyorsítótárazódik, hálózati hiba esetén a korábbi ismertető vagy az eredeti rövid tény marad. A forráscikkhez vezető hivatkozás elérhetővé teszi a Wikipédia közreműködőit; képet csak a Commons szerzői és licencadataival együtt jelenítünk meg. A fajismertető nem állatállomány-igazolás.
 
 Az új kártyák rétegezett élőhelygrafikát, az új közösségi felület erdei színvilágot kapott, külső fizetős grafikai szolgáltatás nélkül. A mozgáscsökkentési beállítás és a billentyűzetfókusz megmarad.
+
+### Éles közösségi háttérszolgáltatás
+
+A közösség Supabase-beállítás nélkül is csatlakoztatható a Sites/D1 háttérszolgáltatáshoz. A `public/community-config.json` publikus `apiUrl` mezőjét az app futásidőben olvassa. A közösségi felület nyilvánosan olvasható; új bejegyzéshez és megerősítéshez a saját oldalán ChatGPT-bejelentkezés szükséges. Részletek: [`docs/community-backend.md`](docs/community-backend.md).
