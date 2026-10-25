@@ -72,3 +72,20 @@ npx tsx scripts/check-graph.ts   # minden pont elérhető-e a főbejárattól
 ## Adatforrások
 - Térkép, utak, mosdók, büfék, állathelyek: © [OpenStreetMap](https://www.openstreetmap.org/relation/6221647)-közreműködők, ODbL
 - Programok és nyitvatartás: [zoobudapest.com](https://zoobudapest.com/en/be-there/) (2026. 04. 01. – 11. 01.). A helyszíni tábla az irányadó.
+
+## Közösségi tippek és tíz megerősítés
+
+A **Közösség** fülön állatkertenként tippek, fejlesztési ötletek és helyjavítások küldhetők be (HU/EN/DE/ES). Tíz különböző hitelesített fiók megerősítése után a bejegyzés automatikusan „közösség által megerősítve” állapotú. A számláló és az aktiválás adatbázisoldali; a szerző nem erősítheti meg saját bejegyzését, egy fiók egyszer szavazhat. Az anonim fiók nem bizonyít külön embert vagy helyszíni jelenlétet. A helyjavítás nem kerül automatikusan a navigációs gráfba.
+
+Bekapcsolás a meglévő ingyenes Supabase-projekten:
+1. Futtasd a `supabase/community.sql` migrációt az SQL editorban.
+2. Engedélyezd az anonim bejelentkezést: Authentication → Sign In / Providers → Anonymous Sign-Ins. Nyilvános szolgáltatás előtt állíts be megfelelő visszaélésvédelmet.
+3. Add meg a `VITE_SUPABASE_URL` és `VITE_SUPABASE_ANON_KEY` GitHub Actions secreteket, majd futtasd újra a Pages workflow-t. Kizárólag publikus anon kulcsot használj, service-role kulcsot soha.
+
+Konfiguráció nélkül csak egyértelműen jelzett, eszközön tárolt piszkozatmód működik; nincs kitalált közösségi bejegyzés vagy megerősítés. A háttérszolgáltatás hibája sem vált ál-sikerre. A migráció izolált PGlite/PostgreSQL teszten átment (`scripts/check-community.mjs`): 9/10-es aktiválás, ismételt és saját szavazat, jogosulatlan táblaművelet és bejelentkezés nélküli hívás ellenőrizve. A felhasználó éles Supabase-adatbázisára innen nem futtattuk.
+
+## Állatismertetők és grafika
+
+Minden gyűjteménykártya megnyitható a megszerzése előtt is. A meglévő érdekességet a tudományos név alapján lekért Wikipédia-ismertető egészíti ki; a nyelvi cikkváltozatot az angol cikk nyelvi hivatkozása választja ki. Hiányzó fordítás esetén az angol forrást külön jelöljük. A szöveg hét napig gyorsítótárazódik, hálózati hiba esetén a korábbi ismertető vagy az eredeti rövid tény marad. A forráscikkhez vezető hivatkozás elérhetővé teszi a Wikipédia közreműködőit; képet csak a Commons szerzői és licencadataival együtt jelenítünk meg. A fajismertető nem állatállomány-igazolás.
+
+Az új kártyák rétegezett élőhelygrafikát, az új közösségi felület erdei színvilágot kapott, külső fizetős grafikai szolgáltatás nélkül. A mozgáscsökkentési beállítás és a billentyűzetfókusz megmarad.

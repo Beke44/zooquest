@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Compass, Globe2, LayoutGrid, Map as MapIcon, Trophy } from 'lucide-react'
+import { Compass, Globe2, LayoutGrid, Map as MapIcon, Trophy, MessageCircle } from 'lucide-react'
 import { LANGS, setLang } from './i18n'
 import { totals, useStore } from './lib/store'
 import { useParkStatus } from './lib/park'
@@ -10,19 +10,21 @@ import { Toast } from './components/ui'
 import PlanView from './views/PlanView'
 import CollectionView from './views/CollectionView'
 import BoardView from './views/BoardView'
+import CommunityView from './views/CommunityView'
 import type { Lang } from './types'
 
 // Leaflet views load on demand to keep first paint light.
 const MapView = lazy(() => import('./views/MapView'))
 const WorldView = lazy(() => import('./views/WorldView'))
 
-type Tab = 'plan' | 'map' | 'collection' | 'board' | 'world'
+type Tab = 'plan' | 'map' | 'collection' | 'board' | 'world' | 'community'
 const TABS: { id: Tab; icon: typeof Compass }[] = [
   { id: 'plan', icon: Compass },
   { id: 'map', icon: MapIcon },
   { id: 'collection', icon: LayoutGrid },
   { id: 'board', icon: Trophy },
   { id: 'world', icon: Globe2 },
+  { id: 'community', icon: MessageCircle },
 ]
 
 function readTab(): Tab {
@@ -93,17 +95,18 @@ export default function App() {
           {tab === 'map' && <MapView />}
           {tab === 'collection' && <CollectionView />}
           {tab === 'board' && <BoardView />}
+          {tab === 'community' && <CommunityView />}
           {tab === 'world' && <WorldView onOpen={() => go('plan')} />}
         </Suspense>
       </main>
 
       <nav className="fixed inset-x-0 bottom-0 z-[700] border-t border-jungle-100 bg-sand-50/95 pb-[env(safe-area-inset-bottom)] backdrop-blur">
-        <div className="mx-auto grid max-w-2xl grid-cols-5">
+        <div className="mx-auto grid max-w-2xl grid-cols-6">
           {TABS.map(({ id, icon: Icon }) => (
             <button key={id} onClick={() => go(id)} aria-current={tab === id}
               className={`flex flex-col items-center gap-0.5 py-2.5 text-[11px] font-bold transition ${tab === id ? 'text-clay-600' : 'text-jungle-700'}`}>
               <span className={`grid h-8 w-12 place-items-center rounded-full ${tab === id ? 'bg-clay-500/10' : ''}`}><Icon className="h-5 w-5" /></span>
-              {t(`tabs.${id}`)}
+              {id === 'community' ? ({ hu: 'Közösség', en: 'Community', de: 'Community', es: 'Comunidad' }[i18n.language.slice(0, 2)] ?? 'Community') : t(`tabs.${id}`)}
             </button>
           ))}
         </div>

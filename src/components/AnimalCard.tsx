@@ -17,13 +17,13 @@ export default function AnimalCard({ sp, rarity, locked, size = 'md' }: { sp: Sp
         <span className={`rounded-full px-2 py-0.5 text-[10px] font-black uppercase tracking-wider ${st.chip}`}>{t(`rarity.${r}`)}</span>
         {r === 'legendary' && !locked && <span className="text-sm">✨</span>}
       </div>
-      <div className="relative grid flex-1 place-items-center">
+      <div className="animal-habitat relative my-2 grid flex-1 place-items-center overflow-hidden rounded-xl">
         <div className="absolute inset-4 rounded-full bg-white/60 blur-xl" />
-        <span className={`relative ${emoji} ${locked ? 'brightness-0 opacity-30' : 'drop-shadow-md'}`} aria-hidden>
+        <span className={`relative z-10 ${emoji} ${locked ? 'brightness-0 opacity-30' : 'drop-shadow-md'}`} aria-hidden>
           {sp.emoji}
         </span>
       </div>
-      <div className="rounded-xl bg-white/80 px-2 py-1 text-center">
+      <div className="relative z-10 rounded-xl bg-white/90 px-2 py-1 text-center">
         <p className="truncate text-sm font-extrabold text-jungle-900">{locked ? '???' : loc(sp.name, i18n.language)}</p>
         {size !== 'sm' && <p className="truncate text-[10px] italic text-jungle-600">{locked ? '' : sp.latin}</p>}
       </div>

@@ -7,6 +7,7 @@ import { totals, useStore } from '@/lib/store'
 import { levelOf } from '@/lib/scoring'
 import { loadPhoto } from '@/lib/photos'
 import { speciesById } from '@/data/species'
+import AnimalGuide from '@/components/AnimalGuide'
 import AnimalCard from '@/components/AnimalCard'
 import { Card, Sheet } from '@/components/ui'
 import type { Capture } from '@/types'
@@ -71,7 +72,7 @@ export default function CollectionView() {
         {speciesInPark.map((s) => {
           const mine = state.captures.filter((c) => c.speciesId === s.id)
           return (
-            <button key={s.id} onClick={() => mine.length && setOpen(s.id)} className="text-left active:scale-95" disabled={!mine.length}>
+            <button key={s.id} aria-label={loc(s.name, lang)} onClick={() => setOpen(s.id)} className="text-left active:scale-95">
               <AnimalCard sp={s} locked={!mine.length} size="sm" />
             </button>
           )
@@ -144,6 +145,7 @@ function Detail({ speciesId, captures }: { speciesId: string; captures: Capture[
         <p className="text-xs font-bold uppercase tracking-widest text-clay-600">{t('collection.fact')}</p>
         <p className="mt-1 text-jungle-900">{loc(sp.fact, i18n.language)}</p>
       </div>
+      <AnimalGuide sp={sp} />
     </div>
   )
 }

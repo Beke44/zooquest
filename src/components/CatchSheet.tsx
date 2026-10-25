@@ -8,6 +8,7 @@ import { catchPoints, completedZones, effectiveRarity, migrationBonus, passportA
 import { compressImage, isFreshShot, savePhoto } from '@/lib/photos'
 import { toast } from '@/lib/toast'
 import type { Poi, Species } from '@/types'
+import AnimalGuide from './AnimalGuide'
 import AnimalCard from './AnimalCard'
 import { Button, Sheet } from './ui'
 
@@ -89,6 +90,7 @@ export default function CatchSheet({ poi, sp, distance, accuracy, demo, onClose 
           {passportActive(state.captures, park.id, park.country) && (
             <p className="rounded-2xl bg-sky-100 px-3 py-2 text-center text-sm font-bold text-sky-900">🛂 {t('catch.passport', { c: park.country })}</p>
           )}
+          <AnimalGuide sp={sp} />
           <label className="flex items-center justify-between rounded-2xl bg-white px-3 py-2 ring-1 ring-black/5">
             <span className="flex items-center gap-2 font-semibold text-jungle-900"><Users className="h-4 w-4" />{t('catch.coop')}</span>
             <input type="checkbox" checked={coop} onChange={(e) => setCoop(e.target.checked)} className="h-5 w-5 accent-jungle-700" />

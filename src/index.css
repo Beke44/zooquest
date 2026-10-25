@@ -39,3 +39,22 @@ body {
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
+
+/* Expedition identity: forest canopy, warm paper and collectible cards. */
+.expedition-hero {
+  background: radial-gradient(ellipse at 90% 0%, #749454 0%, transparent 48%),
+    radial-gradient(ellipse at 5% 100%, #35745d 0%, transparent 60%), #123d32;
+  box-shadow: 0 16px 36px -22px #123d3280;
+}
+.animal-habitat {
+  background: radial-gradient(ellipse at 50% 35%, #ffffffb3, transparent 58%),
+    linear-gradient(165deg, #d5e9c6, #9ebc92 56%, #50775e);
+}
+.animal-habitat::before, .animal-habitat::after {
+  content: ''; position: absolute; width: 90%; height: 50%; border-radius: 50%;
+  background: #224f3c20; bottom: -12%; transform: rotate(-15deg); left: -25%;
+}
+.animal-habitat::after { left: 40%; bottom: -18%; background: #133e3630; transform: rotate(20deg); }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 3px solid #d1603a; outline-offset: 3px;
+}

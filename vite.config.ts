@@ -4,6 +4,7 @@ import { defineConfig } from 'vite'
 
 export default defineConfig({
   base: './',
+  server: { allowedHosts: ['terminal.local'] },
   plugins: [react()],
   resolve: { alias: { '@': path.resolve(__dirname, './src') } },
 })
