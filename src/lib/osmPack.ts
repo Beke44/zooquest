@@ -39,24 +39,55 @@ interface OsmEl {
   tags?: Record<string, string>
 }
 
+/**
+ * Hedged Overpass request: start on the main server; if it hasn't answered
+ * in 7 s (or fails fast with 429/5xx), also ask the next mirror. The first
+ * good answer wins and the others are cancelled – usually one request,
+ * never more than one per mirror per attempt.
+ */
 export async function overpass(query: string, signal?: AbortSignal): Promise<OsmEl[]> {
-  let lastErr: unknown = null
-  for (let round = 0; round < 2; round++) {
-    for (const url of MIRRORS) {
-      try {
-        const r = await fetch(url, { method: 'POST', body: 'data=' + encodeURIComponent(query), signal, headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
-        if (r.status === 429 || r.status >= 500) { lastErr = new Error(`HTTP ${r.status}`); continue }
-        if (!r.ok) throw new Error(`HTTP ${r.status}`)
-        const j = (await r.json()) as { elements: OsmEl[] }
-        return j.elements ?? []
-      } catch (e) {
-        if ((e as Error).name === 'AbortError') throw e
-        lastErr = e
-      }
+  const body = 'data=' + encodeURIComponent(query)
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const ctrls = MIRRORS.map(() => new AbortController())
+    const onAbort = () => ctrls.forEach((c) => c.abort())
+    signal?.addEventListener('abort', onAbort)
+    try {
+      const res = await new Promise<OsmEl[] | null>((resolve) => {
+        let next = 0
+        let failed = 0
+        let settled = false
+        let timer: ReturnType<typeof setTimeout> | undefined
+        const launch = () => {
+          if (settled || next >= MIRRORS.length) return
+          const i = next++
+          clearTimeout(timer)
+          timer = setTimeout(launch, 7000) // hedge: no answer yet → try the next mirror too
+          fetch(MIRRORS[i], { method: 'POST', body, signal: ctrls[i].signal, headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
+            .then(async (r) => {
+              if (!r.ok) throw new Error(`HTTP ${r.status}`)
+              const j = (await r.json()) as { elements?: OsmEl[] }
+              if (settled) return
+              settled = true
+              clearTimeout(timer)
+              ctrls.forEach((c, k) => k !== i && c.abort())
+              resolve(j.elements ?? [])
+            })
+            .catch(() => {
+              if (settled) return
+              if (++failed === MIRRORS.length) { settled = true; clearTimeout(timer); resolve(null) }
+              else launch() // fast failure → next mirror right away
+            })
+        }
+        launch()
+      })
+      if (res) return res
+    } finally {
+      signal?.removeEventListener('abort', onAbort)
     }
-    await new Promise((res) => setTimeout(res, 2500 * (round + 1)))
+    if (signal?.aborted) break
+    await new Promise((r) => setTimeout(r, 4000))
   }
-  throw lastErr ?? new Error('overpass unavailable')
+  throw new Error('overpass unavailable')
 }
 
 // ---------- species matching ----------

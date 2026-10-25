@@ -59,6 +59,10 @@ export default function WorldView({ onOpen }: { onOpen: () => void }) {
   // curated list → resolve to the real OSM object on first open
   const openCurated = async (z: (typeof WORLD_ZOOS)[number]) => {
     if (z.id === 'budapest') return open(null)
+    if (z.osm) {
+      const t = ({ w: 'way', r: 'relation', n: 'node' } as const)[z.osm[0] as 'w' | 'r' | 'n']
+      return open({ id: `osm-${z.osm}`, osmType: t, osmId: Number(z.osm.slice(1)), name: z.name, lat: z.lat, lon: z.lon, city: z.city, country: z.country })
+    }
     setBusy(z.id)
     try {
       // prebuilt index from GitHub Actions: no Overpass round-trip at all

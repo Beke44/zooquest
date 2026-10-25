@@ -93,6 +93,8 @@ export interface WorldZoo {
   lat: number
   lon: number
   status: 'live' | 'soon'
+  /** OpenStreetMap object of the zoo area, e.g. 'w8079437' (way) / 'r123' (relation) */
+  osm?: string
 }
 
 export interface Capture {
